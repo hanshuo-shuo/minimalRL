@@ -29,7 +29,9 @@ class Policy(nn.Module):
     def train_net(self):
         R = 0
         self.optimizer.zero_grad()
+        ## inverse the data because of the discount factor
         for r, prob in self.data[::-1]:
+            # policy updata rule, we need a log here
             R = r + gamma * R
             loss = -torch.log(prob) * R
             loss.backward()
@@ -55,7 +57,7 @@ def main():
             pi.put_data((r,prob[a]))
             s = s_prime
             score += r
-            
+        # Update the network every epsiold
         pi.train_net()
         
         if n_epi%print_interval==0 and n_epi!=0:
